@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Go Touch Some Grass</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet" />
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body {
+      width: 100%; height: 100%;
+      font-family: 'Roboto', sans-serif;
+      background: #E3F2FD;
+      overflow: hidden;
+    }
+
+    /* ── Sky ─────────────────────────────────────────── */
+    .sky {
+      position: fixed;
+      inset: 0;
+      background: #E3F2FD;
+    }
+
+    /* Sun */
+    .sun {
+      position: absolute;
+      top: 9%;
+      right: 14%;
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      background: #FFEE58;
+    }
+
+    /* Simple flat clouds made of overlapping circles */
+    .cloud {
+      position: absolute;
+    }
+    .cloud span {
+      display: block;
+      position: absolute;
+      border-radius: 50%;
+      background: #fff;
+    }
+
+    .cloud-1 { top: 13%; left: 8%; }
+    .cloud-1 span:nth-child(1) { width: 60px; height: 40px; top: 12px; left: 0; border-radius: 20px; }
+    .cloud-1 span:nth-child(2) { width: 38px; height: 38px; top: 4px; left: 16px; }
+    .cloud-1 span:nth-child(3) { width: 28px; height: 28px; top: 10px; left: 38px; }
+
+    .cloud-2 { top: 8%; left: 36%; }
+    .cloud-2 span:nth-child(1) { width: 80px; height: 44px; top: 16px; left: 0; border-radius: 22px; }
+    .cloud-2 span:nth-child(2) { width: 48px; height: 48px; top: 4px; left: 20px; }
+    .cloud-2 span:nth-child(3) { width: 36px; height: 36px; top: 12px; left: 54px; }
+
+    .cloud-3 { top: 18%; right: 28%; }
+    .cloud-3 span:nth-child(1) { width: 54px; height: 32px; top: 10px; left: 0; border-radius: 16px; }
+    .cloud-3 span:nth-child(2) { width: 32px; height: 32px; top: 2px; left: 14px; }
+    .cloud-3 span:nth-child(3) { width: 24px; height: 24px; top: 8px; left: 36px; }
+
+    /* ── Ground / grass layers ───────────────────────── */
+    .ground {
+      position: fixed;
+      bottom: 0; left: 0; right: 0;
+    }
+
+    /* Back hill */
+    .hill-back {
+      position: absolute;
+      bottom: 0; left: -5%; right: -5%;
+      height: 220px;
+      background: #66BB6A;
+      border-radius: 100% 100% 0 0 / 60% 60% 0 0;
+    }
+    /* Front hill */
+    .hill-front {
+      position: absolute;
+      bottom: 0; left: -8%; right: -8%;
+      height: 140px;
+      background: #4CAF50;
+      border-radius: 100% 100% 0 0 / 50% 50% 0 0;
+    }
+    /* Flat ground strip */
+    .ground-strip {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 60px;
+      background: #388E3C;
+    }
+
+    /* Flat triangular grass blades */
+    .blades {
+      position: absolute;
+      bottom: 58px; left: 0; right: 0;
+      display: flex;
+      gap: 0;
+      align-items: flex-end;
+      overflow: hidden;
+      height: 32px;
+    }
+    .blade {
+      flex-shrink: 0;
+      width: 0; height: 0;
+      border-left: 5px solid transparent;
+      border-right: 5px solid transparent;
+    }
+
+    /* ── Card ────────────────────────────────────────── */
+    .card-wrap {
+      position: relative;
+      z-index: 10;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      padding-bottom: 160px;
+    }
+
+    .card {
+      background: #fff;
+      border-radius: 2px;
+      box-shadow:
+        0 8px 10px -5px rgba(0,0,0,0.20),
+        0 16px 24px 2px  rgba(0,0,0,0.14),
+        0 6px  30px 5px  rgba(0,0,0,0.12);
+      width: min(400px, 88vw);
+      overflow: hidden;
+    }
+
+    /* Coloured header strip */
+    .card-header {
+      background: #388E3C;
+      padding: 24px 24px 20px;
+    }
+    .card-header .label {
+      display: inline-block;
+      background: rgba(0,0,0,0.18);
+      color: rgba(255,255,255,0.85);
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 3px 8px;
+      border-radius: 2px;
+      margin-bottom: 14px;
+    }
+    .card-header h1 {
+      font-size: 26px;
+      font-weight: 300;
+      color: #fff;
+      line-height: 1.3;
+    }
+    .card-header h1 strong {
+      font-weight: 700;
+    }
+
+    /* Card body */
+    .card-body {
+      padding: 18px 24px 14px;
+    }
+    .card-body p {
+      font-size: 14px;
+      color: #616161;
+      line-height: 1.6;
+    }
+
+    /* Divider */
+    .divider {
+      height: 1px;
+      background: #E0E0E0;
+      margin: 0 24px;
+    }
+
+    /* Card actions */
+    .card-actions {
+      padding: 8px 16px 12px;
+      display: flex;
+      gap: 4px;
+      align-items: center;
+    }
+    .btn {
+      font-family: 'Roboto', sans-serif;
+      font-size: 14px;
+      font-weight: 500;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      border: none;
+      background: none;
+      cursor: pointer;
+      padding: 8px 10px;
+      border-radius: 2px;
+      transition: background 0.15s;
+      color: #388E3C;
+    }
+    .btn:hover  { background: rgba(56,142,60,0.08); }
+    .btn:active { background: rgba(56,142,60,0.16); }
+
+    .btn-raised {
+      background: #4CAF50;
+      color: #fff;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.26);
+      margin-right: 4px;
+    }
+    .btn-raised:hover  { background: #43A047; }
+    .btn-raised:active { background: #388E3C; box-shadow: 0 4px 8px rgba(0,0,0,0.26); }
+  </style>
+</head>
+<body>
+
+  <div class="sky">
+    <div class="sun"></div>
+    <div class="cloud cloud-1"><span></span><span></span><span></span></div>
+    <div class="cloud cloud-2"><span></span><span></span><span></span></div>
+    <div class="cloud cloud-3"><span></span><span></span><span></span></div>
+  </div>
+
+  <div class="ground">
+    <div class="hill-back"></div>
+    <div class="hill-front"></div>
+    <div class="blades" id="blades"></div>
+    <div class="ground-strip"></div>
+  </div>
+
+  <div class="card-wrap">
+    <div class="card">
+      <div class="card-header">
+        <div class="label">Blocked</div>
+        <h1>The whole feed is <strong>cringe.</strong></h1>
+      </div>
+      <div class="card-body">
+        <p>Go touch some grass.</p>
+      </div>
+      <div class="divider"></div>
+      <div class="card-actions">
+        <button class="btn btn-raised" onclick="window.history.back()">Go Back</button>
+        <button class="btn" onclick="window.close()">Close Tab</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const container = document.getElementById('blades');
+    const colors = ['#388E3C', '#2E7D32', '#43A047', '#1B5E20', '#4CAF50'];
+    for (let x = 0; x < window.innerWidth + 20; x += 9) {
+      const b = document.createElement('div');
+      b.className = 'blade';
+      const h    = 12 + Math.floor(Math.random() * 20);
+      const half = 3  + Math.floor(Math.random() * 3);
+      const col  = colors[Math.floor(Math.random() * colors.length)];
+      b.style.cssText = `border-left-width:${half}px;border-right-width:${half}px;border-bottom:${h}px solid ${col};`;
+      container.appendChild(b);
+    }
+  </script>
+</body>
+</html>
