@@ -49,8 +49,6 @@ icons/
   icon128.png
 ```
 
-> **Note:** If you uploaded files without the `icons/` subfolder, update the icon paths in `manifest.json` to point to the root (e.g. `"icon16.png"` instead of `"icons/icon16.png"`).
-
 ---
 
 ## Permissions used
